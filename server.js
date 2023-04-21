@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 const server = http.createServer(app);
 
 server.listen(PORT, () => {
-    debug(`Listening on ${PORT}`);
+  debug(`Listening on ${PORT}`);
 });
 
 module.exports = app;
