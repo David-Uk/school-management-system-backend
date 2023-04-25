@@ -1,4 +1,4 @@
-// const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 const mongoose = require('mongoose');
 
@@ -68,6 +68,19 @@ const adminSchema = new mongoose.Schema(
   },
 );
 
+adminSchema.pre('save', async (next) => {
+  if (!this.isModified('password')) {
+    next();
+  }
+  // salt
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+adminSchema.methods.verifyPassword = async (enteredPassword) => {
+  await bcrypt.compare(enteredPassword, this.password);
+};
 // model
 const Admin = mongoose.model('Admin', adminSchema);
 

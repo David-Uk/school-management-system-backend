@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const Admin = require('../../models/Staff/Admin');
 
 class AdminController {
@@ -20,10 +21,19 @@ class AdminController {
   // @route    POST /api/v1/admin/login
   // @access   Private
   static async Login(req, res) {
+    const { email, password } = req.body;
     try {
-      return res.status(201).json('Logged in successfully');
+      // find user
+      const user = await Admin.findOne({ email });
+      if (!user || !(await user.verifyPassword(password))) {
+        return res.status(400).json({ message: 'Invalid login credentials' });
+      }
+      return res.status(201).json({ data: user });
     } catch (error) {
-      return res.status(500).json(error.message);
+      res.json({
+        status: 'failed',
+        error: error.message,
+      });
     }
   }
 
