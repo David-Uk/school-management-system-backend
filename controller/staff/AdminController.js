@@ -25,10 +25,13 @@ class AdminController {
     try {
       // find user
       const user = await Admin.findOne({ email });
-      if (!user || !(await user.verifyPassword(password))) {
-        return res.status(400).json({ message: 'Invalid login credentials' });
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
       }
-      return res.status(201).json({ data: user });
+      if (user && (await user.verifyPassword(password))) {
+        return res.status(201).json({ data: user });
+      }
+      return res.status(400).json({ message: 'Invalid login credentials' });
     } catch (error) {
       res.json({
         status: 'failed',

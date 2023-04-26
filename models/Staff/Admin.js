@@ -20,55 +20,13 @@ const adminSchema = new mongoose.Schema(
       type: String,
       default: 'admin',
     },
-    academicTerms: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'AcademicTerm',
-      },
-    ],
-    programs: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Program',
-      },
-    ],
-    yearGroups: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'YearGroup',
-      },
-    ],
-    academicYears: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'AcademicYear',
-      },
-    ],
-    classLevels: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ClassLevel',
-      },
-    ],
-    teachers: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Teacher',
-      },
-    ],
-    students: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Student',
-      },
-    ],
   },
   {
     timestamps: true,
   },
 );
-
-adminSchema.pre('save', async (next) => {
+// Hash password
+adminSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
   }
@@ -78,9 +36,11 @@ adminSchema.pre('save', async (next) => {
   next();
 });
 
-adminSchema.methods.verifyPassword = async (enteredPassword) => {
-  await bcrypt.compare(enteredPassword, this.password);
+// verifyPassword
+adminSchema.methods.verifyPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
+
 // model
 const Admin = mongoose.model('Admin', adminSchema);
 
